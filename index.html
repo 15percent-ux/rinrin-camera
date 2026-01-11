@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+JP:wght@100;300;400;500;700&family=Inter:wght@200;300;400;500&family=Shippori+Mincho:wght@400;500;600&family=Zen+Kurenaido&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=WindSong:wght@400;500&display=swap');
         
         :root {
             --gold: #c5a059;
@@ -27,6 +28,7 @@
         .serif { font-family: 'Cormorant Garamond', serif; }
         .handwriting { font-family: 'Zen Kurenaido', cursive; }
         .elegant-mincho { font-family: 'Shippori Mincho', serif; }
+        .signature { font-family: 'WindSong', cursive; }
 
         .reveal {
             opacity: 0;
@@ -49,16 +51,79 @@
             text-wrap: balance;
         }
 
-        /* Enhanced Floating Animation for Background Text */
+        /* Hero Animation Container */
+        .animation-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: visible;
+            perspective: 1000px;
+            gap: 0.1em;
+        }
+
+        @media (min-width: 768px) {
+            .animation-container { gap: 0.4em; }
+        }
+
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            will-change: transform, opacity;
+            animation-duration: 0.8s;
+            animation-fill-mode: forwards;
+            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .letter.left { animation-name: rollFromLeft; }
+        .letter.right { animation-name: rollFromRight; }
+
+        .letter:nth-child(1) { animation-delay: 0.1s; }
+        .letter:nth-child(2) { animation-delay: 0.2s; }
+        .letter:nth-child(3) { animation-delay: 0.3s; }
+        .letter:nth-child(4) { animation-delay: 0.4s; }
+        .letter:nth-child(5) { animation-delay: 0.5s; }
+        .letter:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes rollFromLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-150%) rotate(-120deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotate(0deg);
+            }
+        }
+
+        @keyframes rollFromRight {
+            0% {
+                opacity: 0;
+                transform: translateX(150%) rotate(120deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0) rotate(0deg);
+            }
+        }
+
+        /* Floating Animation for 'me' */
         @keyframes floatingMe {
-            0% { transform: translate(0, 0) rotate(-5deg); }
-            50% { transform: translate(20px, -45px) rotate(5deg); }
-            100% { transform: translate(0, 0) rotate(-5deg); }
+            0% { transform: translate(0, 0) rotate(-8deg); }
+            50% { transform: translate(15px, -40px) rotate(-2deg); }
+            100% { transform: translate(0, 0) rotate(-8deg); }
         }
 
         .animate-float-me {
-            animation: floatingMe 4.5s ease-in-out infinite;
+            animation: floatingMe 4s ease-in-out infinite;
             will-change: transform;
+        }
+
+        /* Instagram Embed Fixes */
+        .instagram-media {
+            margin: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: unset !important;
         }
 
         ::-webkit-scrollbar { width: 4px; }

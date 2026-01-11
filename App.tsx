@@ -95,10 +95,15 @@ const App: React.FC = () => {
           <span className="text-black font-medium tracking-[0.2em] uppercase font-sans block mb-6 text-[10px] md:text-sm opacity-60">
             selfbrand shooting studio
           </span>
-          <h1 className="text-5xl md:text-9xl font-bold tracking-[0.3em] md:tracking-[0.6em] uppercase leading-tight mb-12 font-sans mr-[-0.3em] md:mr-[-0.6em]">
-            RINRIN
+          <h1 className="animation-container text-6xl md:text-9xl font-bold uppercase leading-tight mb-12 font-sans">
+            <span className="letter left">R</span>
+            <span className="letter left">I</span>
+            <span className="letter left">N</span>
+            <span className="letter right">R</span>
+            <span className="letter right">I</span>
+            <span className="letter right">N</span>
           </h1>
-          <div className="gold-line max-w-[200px] md:max-w-[320px] mx-auto opacity-40"></div>
+          <div className="gold-line max-w-[150px] md:max-w-[320px] mx-auto opacity-40"></div>
         </div>
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-slate-300">
           <i className="fas fa-chevron-down"></i>
@@ -106,7 +111,7 @@ const App: React.FC = () => {
       </section>
 
       {/* Profile Section */}
-      <section id="about" className="py-32 md:py-40 px-8 max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start">
+      <section id="about" className="py-24 md:py-40 px-8 max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start">
         <div className="reveal flex-shrink-0">
           <div className="w-40 h-56 md:w-56 md:h-72 relative group">
             <img 
@@ -168,29 +173,34 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white/40 backdrop-blur-sm border border-black/5 p-6 md:p-12 shadow-sm rounded-sm relative group transition-all duration-1000">
-              <div className="absolute inset-2 border border-black/5 -z-10"></div>
-              <div className="space-y-8 not-italic text-center">
-                <div className="space-y-2">
-                  <p className="text-[6px] md:text-[7px] tracking-[0.4em] text-slate-400 uppercase font-sans">Personal Anthology</p>
-                  <p className="text-base md:text-lg handwriting font-light pt-1 text-black">〈 りんりん 金山由佳里 〉</p>
-                  <p className="text-[6px] md:text-[7px] tracking-[0.3em] text-black font-bold uppercase font-sans">Photographer / Branding Consultant</p>
-                </div>
-                <div className="grid md:grid-cols-2 gap-8 text-left items-start max-w-lg mx-auto handwriting">
-                   <ul className="space-y-3 text-[8px] md:text-[9px] tracking-widest font-light leading-loose list-none">
-                    <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Niigata Tokyo Nagano</li>
-                    <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Family of 4</li>
-                    <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Arts Fashion Chocolate</li>
-                    <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Hot Yoga Journey</li>
-                  </ul>
-                  <div className="space-y-4 text-[9px] md:text-[10px] tracking-wide leading-relaxed">
-                    <div className="space-y-3">
-                      <h3 className="text-[8px] tracking-[0.2em] border-b border-black/10 pb-1 font-medium uppercase font-sans">STORY</h3>
-                      <p className="text-balance">高校の頃にファッション誌が好きで写真に目覚め都内の写真専門学校へ</p>
-                      <p className="text-balance">卒業後は都内フォトスタジオに3年勤め約3,000人以上撮影 ライティングやレタッチなどを学んできました</p>
+            
+            <div className="relative max-w-lg mx-auto">
+              <div className="bg-white/40 backdrop-blur-sm border border-black/5 p-6 md:p-12 shadow-sm rounded-sm relative group transition-all duration-1000">
+                <div className="absolute inset-2 border border-black/5 -z-10"></div>
+                <div className="space-y-8 not-italic text-center">
+                  <div className="space-y-2">
+                    <p className="text-[6px] md:text-[7px] tracking-[0.4em] text-slate-400 uppercase font-sans">Personal Anthology</p>
+                    <p className="text-[6px] md:text-[7px] tracking-[0.3em] text-black font-bold uppercase font-sans pt-2">Photographer / Branding Consultant</p>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-8 text-left items-start handwriting">
+                     <ul className="space-y-3 text-[8px] md:text-[9px] tracking-widest font-light leading-loose list-none">
+                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Niigata Tokyo Nagano</li>
+                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Family of 4</li>
+                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Arts Fashion Chocolate</li>
+                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Hot Yoga Journey</li>
+                    </ul>
+                    <div className="space-y-4 text-[9px] md:text-[10px] tracking-wide leading-relaxed">
+                      <div className="space-y-3">
+                        <h3 className="text-[8px] tracking-[0.2em] border-b border-black/10 pb-1 font-medium uppercase font-sans">STORY</h3>
+                        <p className="text-balance">高校の頃にファッション誌が好きで写真に目覚め都内の写真専門学校へ</p>
+                        <p className="text-balance">卒業後は都内フォトスタジオに3年勤め約3,000人以上撮影 ライティングやレタッチなどを学んできました</p>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className="absolute -bottom-12 right-2 md:right-0 transform rotate-[-3deg] select-none pointer-events-none">
+                <span className="signature text-4xl md:text-5xl text-black/70">Yukari Kanayama</span>
               </div>
             </div>
           </div>
@@ -199,8 +209,8 @@ const App: React.FC = () => {
 
       {/* Community Section: 'me' */}
       <section id="community" className="py-40 md:py-64 bg-white relative overflow-hidden">
-        {/* Massive Floating Background Decor - Adjusted for mobile overlap */}
-        <div className="absolute top-10 md:top-0 -left-16 md:-left-32 text-[60vw] md:text-[50vw] font-bold text-slate-50/70 select-none pointer-events-none serif leading-none z-0 animate-float-me opacity-40 md:opacity-80">
+        {/* Massive Floating Background Decor - Optimized for Mobile */}
+        <div className="absolute top-20 md:top-0 -left-20 md:-left-32 text-[70vw] md:text-[50vw] font-bold text-slate-50/70 select-none pointer-events-none serif leading-none z-0 animate-float-me opacity-30 md:opacity-80">
           me
         </div>
         <div className="max-w-6xl mx-auto px-8 relative z-10">
@@ -281,7 +291,6 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex-1 w-full flex justify-center reveal relative z-10">
-              {/* Responsive Container for Instagram */}
               <div className="w-full max-w-[480px] bg-white p-2 md:p-4 shadow-2xl rounded-sm relative group">
                 <div className="absolute -top-12 md:-top-10 -right-2 md:-right-6 handwriting text-[10px] md:text-[11px] text-[#c5a059] rotate-12 bg-white px-4 py-2 shadow-sm border border-black/5 z-20">
                   Favorite Shot ✨
@@ -289,7 +298,6 @@ const App: React.FC = () => {
                 <div className="absolute -bottom-6 -left-6 w-16 md:w-24 h-16 md:h-24 border border-[#c5a059]/20 -z-10 rotate-45"></div>
                 
                 <div className="overflow-hidden rounded-sm border border-black/5 bg-white w-full">
-                  {/* Clean Feed-only Instagram Embed */}
                   <blockquote 
                     className="instagram-media" 
                     data-instgrm-permalink="https://www.instagram.com/p/DTKp5hGD-J-/" 
@@ -298,17 +306,16 @@ const App: React.FC = () => {
                       background: '#FFF', 
                       border: 0, 
                       borderRadius: '3px', 
-                      boxShadow: '0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)', 
-                      margin: '1px', 
+                      boxShadow: 'none', 
+                      margin: '0', 
                       maxWidth: '100%', 
-                      minWidth: '280px', 
                       padding: 0, 
-                      width: 'calc(100% - 2px)' 
+                      width: '100%' 
                     }}
                   >
                     <div style={{ padding: '16px' }}>
                       <a href="https://www.instagram.com/p/DTKp5hGD-J-/" target="_blank" style={{ color:'#c9c8cd', fontFamily:'Arial,sans-serif', fontSize:'14px', fontStyle:'normal', fontWeight:'normal', lineHeight:'17px', textDecoration:'none' }}>
-                        Loading Instagram Post...
+                        Loading Feed...
                       </a>
                     </div>
                   </blockquote>
