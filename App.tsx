@@ -1,206 +1,263 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { ViewMode, Character, Message } from './types';
+import { ViewMode, Character } from './types';
 import { DEFAULT_CHARACTERS } from './constants';
-import { CharacterChatService } from './services/geminiService';
+
+declare const gsap: any;
 
 const PORTFOLIO_IMAGES = [
-  { url: 'https://images.unsplash.com/photo-1520390138845-fd2d229dd553?auto=format&fit=crop&q=80&w=800', title: 'Natural Portrait' },
-  { url: 'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?auto=format&fit=crop&q=80&w=800', title: 'Brand Story' },
-  { url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800', title: 'Studio Session' },
-  { url: 'https://images.unsplash.com/photo-1552168324-d612d77725e3?auto=format&fit=crop&q=80&w=800', title: 'Lifestyle Branding' },
-  { url: 'https://images.unsplash.com/photo-1495745966610-2a67f2297e5e?auto=format&fit=crop&q=80&w=800', title: 'Product Aesthetics' },
-  { url: 'https://images.unsplash.com/photo-1481326329074-851606557cf1?auto=format&fit=crop&q=80&w=800', title: 'Atmosphere' }
+  { 
+    url: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077772/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.37.10_pzaruc.png', 
+    title: 'Natural Brand' 
+  },
+  { 
+    url: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077770/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.35.16_cj4orm.png', 
+    title: 'Creative Session' 
+  }
+];
+
+const INSTAGRAM_BASE_URL = 'https://www.instagram.com/rinrin_photo.yk/';
+
+// シューティングセクション用の画像
+const INSTAGRAM_POSTS = [
+  { 
+    id: 'post-1', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768210260/IMG_1359_dnthxb.jpg' 
+  },
+  { 
+    id: 'post-2', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768210294/IMG_1363_bjeczx.jpg' 
+  },
+  { 
+    id: 'post-3', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768210272/IMG_1362_hegtak.jpg' 
+  },
+  { 
+    id: 'post-4', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768210271/IMG_1360_mhmwik.jpg' 
+  },
+  { 
+    id: 'post-5', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768210260/IMG_1358_f3nya6.jpg' 
+  },
+  { 
+    id: 'post-6', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077771/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.36.28_epbzmw.png' 
+  },
+  { 
+    id: 'post-7', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077774/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.39.15_lzaxxk.png' 
+  },
+  { 
+    id: 'post-8', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077771/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.36.05_dv6gzr.png' 
+  },
+  { 
+    id: 'post-9', 
+    url: INSTAGRAM_BASE_URL, 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768119997/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.13.56_wkca5n.png' 
+  }
+];
+
+// プロフィールセクション用のミニフィード
+const PROFILE_FEED_POSTS = [
+  { 
+    id: 'feed1', 
+    url: 'https://www.instagram.com/rinrin_photo.yk/', 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077771/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.36.05_dv6gzr.png' 
+  },
+  { 
+    id: 'feed2', 
+    url: 'https://www.instagram.com/rinrin_photo.yk/', 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077770/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.35.51_ejhar2.png' 
+  },
+  { 
+    id: 'feed3', 
+    url: 'https://www.instagram.com/rinrin_photo.yk/', 
+    imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768075420/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.03.13_gv8lpg.png' 
+  }
+];
+
+const INSTAGRAM_HIGHLIGHTS = [
+  { id: 2, title: 'me', url: INSTAGRAM_BASE_URL, isCustom: true },
+  { id: 3, title: 'Voice', url: INSTAGRAM_BASE_URL, img: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077770/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.35.16_cj4orm.png' },
+  { id: 4, title: 'Gallery', url: INSTAGRAM_BASE_URL, img: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077773/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.39.02_ihugtf.png' },
+  { id: 5, title: 'Life', url: INSTAGRAM_BASE_URL, img: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077771/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.36.05_dv6gzr.png' },
 ];
 
 const App: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [chatService, setChatService] = useState<CharacterChatService | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const rinrin = DEFAULT_CHARACTERS[0];
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const profileRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // GSAP Hero Animation
+    if (typeof gsap !== 'undefined' && titleRef.current) {
+      const chars = titleRef.current.querySelectorAll('.char');
+      const tl = gsap.timeline({ delay: 0.5 });
+
+      tl.fromTo(Array.from(chars).slice(0, 3), 
+        { x: -400, rotation: -360, opacity: 0, scale: 0.5 },
+        { x: 0, rotation: 0, opacity: 1, scale: 1, duration: 1.2, ease: "back.out(1.7)", stagger: 0.1 }
+      );
+
+      tl.fromTo(Array.from(chars).slice(3, 6), 
+        { x: 400, rotation: 360, opacity: 0, scale: 0.5 },
+        { x: 0, rotation: 0, opacity: 1, scale: 1, duration: 1.2, ease: "back.out(1.7)", stagger: 0.1 },
+        "-=1.0"
+      );
+    }
+
+    // GSAP Highlights Hover Animation logic
+    if (typeof gsap !== 'undefined') {
+      const highlights = document.querySelectorAll('.highlight-item');
+      highlights.forEach((el) => {
+        el.addEventListener('mouseenter', () => {
+          const circle = el.querySelector('.highlight-circle');
+          gsap.to(circle, { scale: 1.15, duration: 0.4, ease: "power2.out" });
+          gsap.fromTo(circle, { rotate: -4 }, { rotate: 4, duration: 0.12, repeat: 5, yoyo: true, ease: "power1.inOut" });
+        });
+        el.addEventListener('mouseleave', () => {
+          const circle = el.querySelector('.highlight-circle');
+          gsap.to(circle, { scale: 1, rotate: 0, duration: 0.4, ease: "power2.inOut" });
+        });
+      });
+    }
+
+    // Reveal Intersection Observer
     const observerOptions = { threshold: 0.1 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('active');
+          if (entry.target.id === 'about' && typeof gsap !== 'undefined') {
+            const ptl = gsap.timeline();
+            ptl.fromTo(".profile-img-anim", { scale: 1.15, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.6, ease: "power2.out" })
+            .fromTo(".profile-text-stagger", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.2, ease: "power3.out" }, "-=1.0")
+            .fromTo(".profile-line-anim", { width: 0 }, { width: "100%", duration: 1, ease: "expo.out" }, "-=0.5");
+            observer.unobserve(entry.target);
+          }
+          if (entry.target.id === 'tips' && typeof gsap !== 'undefined') {
+            gsap.fromTo(".tips-header-anim", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 1.2, ease: "power4.out" });
+          }
         }
       });
     }, observerOptions);
 
-    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    const service = new CharacterChatService(rinrin);
-    service.initChat();
-    setChatService(service);
-    setMessages([{ role: 'model', text: rinrin.greeting, timestamp: new Date() }]);
-
-    // Initialize Instagram Embeds
-    if ((window as any).instgrm) {
-      (window as any).instgrm.Embeds.process();
-    }
-
+    document.querySelectorAll('.reveal, #about, #tips').forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const handleSendMessage = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!input.trim() || !chatService || isLoading) return;
-
-    const userMessage: Message = { role: 'user', text: input, timestamp: new Date() };
-    setMessages(prev => [...prev, userMessage]);
-    const currentInput = input;
-    setInput('');
-    setIsLoading(true);
-
-    try {
-      const response = await chatService.sendMessage(currentInput);
-      const botMessage: Message = { role: 'model', text: response, timestamp: new Date() };
-      setMessages(prev => [...prev, botMessage]);
-    } catch (err: any) {
-      const errorMessage: Message = { role: 'model', text: `申し訳ありません。エラーが発生しました。: ${err.message}`, timestamp: new Date() };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // 無限スクロール用にリストを複製
+  const scrollingPosts = [...INSTAGRAM_POSTS, ...INSTAGRAM_POSTS];
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-6 mix-blend-difference text-white">
-        <div className="serif text-lg md:text-xl tracking-[0.3em] font-light">RIN RIN</div>
-        <div className="hidden md:flex gap-12 text-[10px] tracking-[0.2em] font-medium uppercase">
+        <div className="serif text-xl md:text-2xl tracking-[0.5em] font-light uppercase">RIN RIN</div>
+        <div className="hidden md:flex gap-12 text-[10px] tracking-[0.3em] font-medium uppercase">
           <a href="#about" className="hover:text-gold transition-colors">Profile</a>
           <a href="#message" className="hover:text-gold transition-colors">Message</a>
           <a href="#community" className="hover:text-gold transition-colors">Community</a>
-          <a href="#tips" className="hover:text-gold transition-colors">Shooting Tips</a>
+          <a href="#tips" className="hover:text-gold transition-colors">Shooting</a>
           <a href="#portfolio" className="hover:text-gold transition-colors">Portfolio</a>
-          <a href="#club" className="hover:text-gold transition-colors">Studio Chat</a>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="h-screen flex flex-col items-center justify-center text-center px-6 relative overflow-hidden bg-[#fdfbf7]">
-        <div className="reveal">
-          <span className="text-black font-medium tracking-[0.2em] uppercase font-sans block mb-6 text-[10px] md:text-sm opacity-60">
+      <section className="relative h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <div 
+            className="w-full h-full bg-cover grayscale brightness-50 hero-bg-animate"
+            style={{ 
+              backgroundImage: `url('https://res.cloudinary.com/dxr2aeoze/image/upload/v1768075420/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.03.13_gv8lpg.png')`,
+              backgroundPosition: 'center 15%' 
+            }}
+          />
+        </div>
+        <div className="absolute inset-0 z-10 bg-black/20" />
+        <div className="reveal relative z-20 text-white">
+          <span className="font-medium tracking-[0.4em] uppercase font-sans block mb-6 text-[10px] md:text-sm opacity-90">
             selfbrand shooting studio
           </span>
-          <h1 className="animation-container text-6xl md:text-9xl font-bold uppercase leading-tight mb-12 font-sans">
-            <span className="letter left">R</span>
-            <span className="letter left">I</span>
-            <span className="letter left">N</span>
-            <span className="letter right">R</span>
-            <span className="letter right">I</span>
-            <span className="letter right">N</span>
+          <h1 ref={titleRef} className="animation-container serif text-7xl md:text-[10rem] font-light uppercase leading-tight mb-12">
+            <span className="char">R</span><span className="char">I</span><span className="char">N</span>
+            <span className="char">R</span><span className="char">I</span><span className="char">N</span>
           </h1>
-          <div className="gold-line max-w-[150px] md:max-w-[320px] mx-auto opacity-40"></div>
+          <div className="gold-line max-w-[150px] md:max-w-[320px] mx-auto opacity-60"></div>
         </div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-slate-300">
-          <i className="fas fa-chevron-down"></i>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-white/70 z-20">
+          <i className="fas fa-chevron-down text-lg"></i>
         </div>
       </section>
 
       {/* Profile Section */}
-      <section id="about" className="py-24 md:py-40 px-8 max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start">
-        <div className="reveal flex-shrink-0">
-          <div className="w-40 h-56 md:w-56 md:h-72 relative group">
+      <section id="about" ref={profileRef} className="py-24 md:py-40 px-8 max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start overflow-hidden border-b border-slate-50">
+        <div className="flex-shrink-0">
+          <div className="w-40 h-56 md:w-56 md:h-72 relative group profile-img-anim">
             <img 
-              src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1766815239/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2025-12-04_18.59.16_xedy7u.png" 
-              className="absolute inset-0 w-full h-full object-cover grayscale brightness-105 transition-all duration-1000 group-hover:grayscale-0 group-hover:opacity-0 shadow-sm rounded-sm"
+              src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768155657/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-12_3.17.11_pntqeo.png" 
+              className="absolute inset-0 w-full h-full object-cover grayscale brightness-105 shadow-sm rounded-sm transition-all duration-1000 group-hover:grayscale-0"
+              alt="Profile"
             />
-            <img 
-              src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768075420/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.03.13_gv8lpg.png" 
-              className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-all duration-1000 shadow-sm rounded-sm scale-105 group-hover:scale-100 grayscale group-hover:grayscale-0"
-            />
-            <div className="absolute top-4 left-4 -right-4 -bottom-4 border-[0.5px] border-slate-200 -z-10 group-hover:border-[#c5a059]/30 transition-colors duration-700"></div>
           </div>
         </div>
-        <div className="reveal flex-1 space-y-10">
+        <div className="flex-1 space-y-12">
           <div className="space-y-4">
-            <span className="text-[9px] tracking-[0.4em] font-medium text-[#c5a059] uppercase block">Discover</span>
-            <h2 className="serif text-5xl md:text-6xl font-light tracking-tight lowercase text-balance">profile</h2>
+            <span className="profile-text-stagger text-[9px] tracking-[0.4em] font-medium text-[#c5a059] uppercase block">Discover</span>
+            <h2 className="profile-text-stagger serif text-5xl md:text-7xl font-light tracking-tight lowercase text-balance">profile</h2>
+            <div className="profile-line-anim gold-line opacity-30 mt-4 origin-left"></div>
           </div>
-          <div className="space-y-8">
-            <div className="space-y-6 font-light">
-              <p className="text-balance font-medium text-slate-800 text-sm md:text-base">お洒落な女性のための出張撮影会</p>
-              <ul className="space-y-3 list-none pl-0 handwriting text-[10px] md:text-[11px] tracking-widest text-slate-500 leading-loose">
-                <li className="flex items-baseline gap-2 text-balance"><span className="text-[8px] text-[#c5a059] font-sans">•</span><span>パーティー / 商品物撮り etc</span></li>
-                <li className="flex items-baseline gap-2 text-balance"><span className="text-[8px] text-[#c5a059] font-sans">•</span><span>フォトコミュニティー『me』共同主催</span></li>
-                <li className="flex items-baseline gap-2 text-balance"><span className="text-[8px] text-[#c5a059] font-sans">•</span><span>過去3,000名以上撮影経験あり</span></li>
-                <li className="flex items-baseline gap-2 text-balance"><span className="text-[8px] text-[#c5a059] font-sans">•</span><span>東京・長野 | 全国出張撮影（安曇野市在住）</span></li>
-                <li className="flex items-baseline gap-2 text-balance"><span className="text-[8px] text-[#c5a059] font-sans">•</span><span>グループ撮影会ご相談下さい</span></li>
-              </ul>
+          <div className="space-y-10">
+            <div className="space-y-8 font-light">
+              <div className="profile-text-stagger space-y-1">
+                <p className="text-[10px] md:text-[12px] tracking-[0.2em] text-slate-400 font-bold uppercase font-sans">Photographer / Branding Consultant</p>
+              </div>
+            </div>
+            <div className="profile-text-stagger pt-4">
+              <span className="text-[8px] tracking-[0.3em] font-bold text-slate-300 uppercase block mb-4">Instagram Feed</span>
+              <div className="grid grid-cols-3 gap-3 max-w-[400px]">
+                {PROFILE_FEED_POSTS.map((post) => (
+                  <a key={post.id} href={post.url} target="_blank" rel="noopener noreferrer" className="group relative block aspect-square overflow-hidden rounded-sm border border-black/5 bg-slate-50 transition-all duration-500 shadow-sm">
+                    <img src={post.imageUrl} alt="Instagram Feed" className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110" />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Message Section */}
-      <section id="message" className="py-32 md:py-48 px-8 bg-[#fdfbf7] relative overflow-hidden border-b border-black/5">
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-5">
-           <div className="absolute top-10 left-10 w-48 h-48 border border-black rotate-45"></div>
-           <div className="absolute bottom-10 right-10 w-72 h-72 border border-black -rotate-12"></div>
-        </div>
-        <div className="max-w-3xl mx-auto space-y-12 text-center reveal">
+      <section id="message" className="py-32 md:py-48 px-8 bg-[#fdfbf7] relative border-b border-black/5 overflow-hidden">
+        <div className="max-w-4xl mx-auto space-y-16 text-center reveal">
           <div className="space-y-4">
             <span className="text-[7px] md:text-[8px] tracking-[0.5em] font-medium text-black uppercase block mb-2">Philosophy & Journey</span>
             <h2 className="handwriting text-lg md:text-xl font-light tracking-[0.2em] text-black">message</h2>
             <div className="h-[0.5px] bg-black/20 max-w-[30px] mx-auto mt-4"></div>
           </div>
-          <div className="handwriting text-black leading-[2.2] space-y-10 text-balance text-[10px] md:text-[11px] font-light">
-            <div className="space-y-6">
-              <p className="text-sm md:text-base leading-relaxed tracking-wide text-balance">
-                こんにちは<br />
-                シンプルお洒落フォトが大好きな<br />
-                フォトグラファーりんりんです
-              </p>
-              <div className="space-y-2">
-                <p className="text-balance">フォトグラファーならではの視点で<br />スマホでOKな</p>
-                <div className="flex flex-col items-center gap-2 py-4">
-                  <span className="block border-b border-black/5 pb-1 tracking-widest text-balance">ファンを増やす垢抜けフォトのコツ</span>
-                  <span className="block border-b border-black/5 pb-1 tracking-widest text-balance">自撮り&他撮りのコツ</span>
-                  <span className="block border-b border-black/5 pb-1 tracking-widest text-balance">商品の魅力の伝え方</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="relative max-w-lg mx-auto">
-              <div className="bg-white/40 backdrop-blur-sm border border-black/5 p-6 md:p-12 shadow-sm rounded-sm relative group transition-all duration-1000">
-                <div className="absolute inset-2 border border-black/5 -z-10"></div>
-                <div className="space-y-8 not-italic text-center">
-                  <div className="space-y-2">
-                    <p className="text-[6px] md:text-[7px] tracking-[0.4em] text-slate-400 uppercase font-sans">Personal Anthology</p>
-                    <p className="text-[6px] md:text-[7px] tracking-[0.3em] text-black font-bold uppercase font-sans pt-2">Photographer / Branding Consultant</p>
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-8 text-left items-start handwriting">
-                     <ul className="space-y-3 text-[8px] md:text-[9px] tracking-widest font-light leading-loose list-none">
-                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Niigata Tokyo Nagano</li>
-                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Family of 4</li>
-                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Arts Fashion Chocolate</li>
-                      <li className="flex gap-2 items-center"><span className="w-0.5 h-0.5 bg-black/30"></span> Hot Yoga Journey</li>
-                    </ul>
-                    <div className="space-y-4 text-[9px] md:text-[10px] tracking-wide leading-relaxed">
-                      <div className="space-y-3">
-                        <h3 className="text-[8px] tracking-[0.2em] border-b border-black/10 pb-1 font-medium uppercase font-sans">STORY</h3>
-                        <p className="text-balance">高校の頃にファッション誌が好きで写真に目覚め都内の写真専門学校へ</p>
-                        <p className="text-balance">卒業後は都内フォトスタジオに3年勤め約3,000人以上撮影 ライティングやレタッチなどを学んできました</p>
-                      </div>
-                    </div>
+          <div className="relative max-w-2xl mx-auto">
+            <div className="bg-white/40 backdrop-blur-sm border border-black/5 p-8 md:p-14 shadow-sm rounded-sm relative group transition-all duration-1000 space-y-16">
+              <div className="grid md:grid-cols-2 gap-12 text-left items-start handwriting">
+                 <ul className="space-y-4 text-[9px] md:text-[10px] tracking-widest font-light leading-loose list-none">
+                  <li><span className="w-0.5 h-0.5 bg-black/30 inline-block mr-2"></span> Niigata Tokyo Nagano</li>
+                  <li><span className="w-0.5 h-0.5 bg-black/30 inline-block mr-2"></span> Family of 4</li>
+                  <li><span className="w-0.5 h-0.5 bg-black/30 inline-block mr-2"></span> Arts Fashion Chocolate</li>
+                </ul>
+                <div className="space-y-6 text-[10px] md:text-[11px] tracking-wide leading-relaxed">
+                  <div className="space-y-4">
+                    <h3 className="text-[9px] tracking-[0.2em] border-b border-black/10 pb-1 font-medium uppercase font-sans">STORY</h3>
+                    <p>高校の頃にファッション誌が好きで写真に目覚め都内の写真専門学校へ</p>
+                    <p>卒業後は都内フォトスタジオに3年勤め約3,000人以上撮影 ライティングやレタッチなどを学んできました</p>
                   </div>
                 </div>
-              </div>
-              <div className="absolute -bottom-12 right-2 md:right-0 transform rotate-[-3deg] select-none pointer-events-none">
-                <span className="signature text-4xl md:text-5xl text-black/70">Yukari Kanayama</span>
               </div>
             </div>
           </div>
@@ -209,28 +266,14 @@ const App: React.FC = () => {
 
       {/* Community Section: 'me' */}
       <section id="community" className="py-40 md:py-64 bg-white relative overflow-hidden">
-        {/* Massive Floating Background Decor - Optimized for Mobile */}
         <div className="absolute top-20 md:top-0 -left-20 md:-left-32 text-[70vw] md:text-[50vw] font-bold text-slate-50/70 select-none pointer-events-none serif leading-none z-0 animate-float-me opacity-30 md:opacity-80">
           me
         </div>
         <div className="max-w-6xl mx-auto px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-24 items-center">
-            <div className="reveal relative pr-8 pb-8 md:pr-12 md:pb-12 lg:pr-16 lg:pb-16 group/me">
-              <div className="aspect-[4/5] bg-slate-50 overflow-hidden relative shadow-2xl rounded-sm">
-                <img 
-                  src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768075420/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.03.13_gv8lpg.png" 
-                  className="w-full h-full object-cover grayscale brightness-110 transition-all duration-700 group-hover/me:grayscale-0 group-hover/me:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-white/40 to-transparent"></div>
-              </div>
-              <div className="absolute bottom-0 right-0 w-1/2 aspect-square border-4 md:border-8 border-white shadow-xl overflow-hidden rounded-sm hidden sm:block transition-all hover:scale-105 duration-700 bg-white">
-                <img 
-                  src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768077771/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-11_5.36.28_epbzmw.png" 
-                  className="w-full h-full object-contain grayscale group-hover/me:grayscale-0 transition-all duration-700"
-                />
-              </div>
-              <div className="absolute top-0 left-0 -mt-4 -ml-4 md:-mt-8 md:-ml-8 w-1/3 aspect-[3/2] bg-black p-2 md:p-4 text-white text-[7px] md:text-[8px] tracking-[0.3em] md:tracking-[0.4em] uppercase font-sans hidden md:flex items-center justify-center">
-                Seasonal Collective
+          <div className="grid lg:grid-cols-2 gap-24 items-center mb-16">
+            <div className="reveal relative pr-8 pb-8 md:pr-12 md:pb-12 group/me">
+              <div className="aspect-[4/5] bg-slate-50 overflow-hidden relative shadow-2xl rounded-sm animate-soft-float">
+                <img src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768209448/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%86%E3%82%99%E3%82%B5%E3%82%99%E3%82%A4%E3%83%B3_4_qertko.png" className="w-full h-full object-cover grayscale transition-all duration-700 group-hover/me:grayscale-0" alt="Community me" />
               </div>
             </div>
             <div className="space-y-12">
@@ -241,18 +284,15 @@ const App: React.FC = () => {
                 </div>
                 <h2 className="serif text-7xl md:text-[12rem] font-light tracking-tighter text-black leading-none lowercase">me</h2>
                 <div className="pl-4">
-                   <p className="handwriting text-lg md:text-2xl text-black/80 leading-relaxed tracking-wide text-balance">
-                    メンバーのみんなが主役 Photoを通して自分自身にフォーカスする時間を。
-                   </p>
+                   <p className="handwriting text-lg md:text-2xl text-black/80 leading-relaxed tracking-wide text-balance">メンバーのみんなが主役 Photoを通して自分自身にフォーカスする時間を。</p>
                 </div>
               </div>
               <div className="reveal pl-4 space-y-10">
                 <div className="handwriting text-black/60 leading-[2.5] text-[11px] md:text-[13px] font-light max-w-md">
-                  <p className="mb-8 text-balance">フォトコミュニティー『me』はひな子とフォトグラファーりんりんによる <span className="text-black font-medium border-b border-black/5">“こんなの撮ってみたかった”</span> を叶える撮影会コミュニティーです。</p>
-                  <p className="mb-8 text-balance">春夏秋冬ファッションを楽しむようにシーズナルな撮影やスタジオ撮影を東京で行っています。</p>
+                  <p className="mb-8">フォトコミュニティー『me』はひな子とフォトグラファーりんりんによる <span className="text-black font-medium border-b border-black/5">“こんなの撮ってみたかった”</span> を叶える撮影会コミュニティーです。</p>
                 </div>
                 <div className="pt-6">
-                  <a href="#" className="group relative inline-flex items-center gap-6 py-4 px-10 bg-black text-white rounded-full overflow-hidden transition-all hover:bg-gold active:scale-95 shadow-xl">
+                  <a href={INSTAGRAM_BASE_URL} target="_blank" className="group relative inline-flex items-center gap-6 py-4 px-10 bg-black text-white rounded-full overflow-hidden transition-all hover:bg-gold active:scale-95 shadow-xl">
                     <span className="relative z-10 text-[10px] tracking-[0.3em] uppercase font-bold">meへ参加</span>
                     <i className="fas fa-arrow-right text-[10px] relative z-10 group-hover:translate-x-2 transition-transform"></i>
                   </a>
@@ -260,68 +300,64 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
+          <div className="reveal mt-20 px-4">
+            <video 
+              width="100%" height="auto" preload="metadata" muted loop playsInline autoPlay 
+              poster="https://res.cloudinary.com/dxr2aeoze/video/upload/f_auto,q_auto,so_0/v1768210062/画面収録_2026-01-12_18.24.12_hybn1c.jpg"
+              style={{ display: 'block', margin: '0 auto', width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '9 / 16', borderRadius: '12px', objectFit: 'cover', backgroundColor: '#eee' }}
+              className="shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000"
+            >
+              <source src="https://res.cloudinary.com/dxr2aeoze/video/upload/f_auto,q_auto/v1768210062/画面収録_2026-01-12_18.24.12_hybn1c.mp4" type="video/mp4" />
+            </video>
+          </div>
         </div>
       </section>
 
-      {/* Shooting Tips Section */}
-      <section id="tips" className="py-32 md:py-40 bg-[#f9f8f4] relative overflow-hidden border-y border-black/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-8">
-          <div className="flex flex-col lg:flex-row gap-16 md:gap-20 items-center">
-            <div className="flex-1 space-y-12 md:space-y-16 reveal">
-              <div className="space-y-8">
-                <div className="flex items-center gap-4">
-                  <span className="text-[8px] tracking-[0.5em] font-bold text-[#c5a059] uppercase font-sans">01 / Educational</span>
-                  <div className="h-[1px] w-20 bg-[#c5a059]/30"></div>
-                </div>
-                <h2 className="serif text-5xl md:text-8xl font-light tracking-tighter text-black leading-tight">
-                  shooting <br />
-                  <span className="italic pl-12 md:pl-24 text-[#c5a059]">tips.</span>
-                </h2>
-              </div>
-              <div className="space-y-10 pl-4 md:pl-12">
-                <div className="handwriting text-black/70 text-base md:text-xl leading-relaxed space-y-6">
-                  <p className="border-l-2 border-[#c5a059] pl-6 italic">「何気ない日常を、最高の1枚に。」</p>
-                  <p className="text-balance leading-[2.2] text-[12px] md:text-[14px]">
-                    フォトグラファー視点で教える、スマホひとつで叶う<br />
-                    垢抜けフォトの法則。光の読み方から構図の秘密まで、<br />
-                    Instagramにて定期的に公開しています。
-                  </p>
-                </div>
-              </div>
-            </div>
+      {/* Shooting Section (Infinite Horizontal Scroll) */}
+      <section id="tips" className="py-32 md:py-48 bg-[#f9f8f4] relative border-y border-black/5 overflow-hidden">
+        <div className="tips-header-anim text-center space-y-6 mb-16 px-8">
+          <div className="flex items-center justify-center gap-4">
+            <div className="h-[1px] w-12 bg-[#c5a059]/30"></div>
+            <span className="text-[10px] tracking-[0.6em] font-bold text-[#c5a059] uppercase font-sans">Educational Series</span>
+            <div className="h-[1px] w-12 bg-[#c5a059]/30"></div>
+          </div>
+          <h2 className="serif text-6xl md:text-8xl font-light tracking-tighter text-black leading-tight text-balance">shooting.</h2>
+        </div>
 
-            <div className="flex-1 w-full flex justify-center reveal relative z-10">
-              <div className="w-full max-w-[480px] bg-white p-2 md:p-4 shadow-2xl rounded-sm relative group">
-                <div className="absolute -top-12 md:-top-10 -right-2 md:-right-6 handwriting text-[10px] md:text-[11px] text-[#c5a059] rotate-12 bg-white px-4 py-2 shadow-sm border border-black/5 z-20">
-                  Favorite Shot ✨
-                </div>
-                <div className="absolute -bottom-6 -left-6 w-16 md:w-24 h-16 md:h-24 border border-[#c5a059]/20 -z-10 rotate-45"></div>
-                
-                <div className="overflow-hidden rounded-sm border border-black/5 bg-white w-full">
-                  <blockquote 
-                    className="instagram-media" 
-                    data-instgrm-permalink="https://www.instagram.com/p/DTKp5hGD-J-/" 
-                    data-instgrm-version="14" 
-                    style={{ 
-                      background: '#FFF', 
-                      border: 0, 
-                      borderRadius: '3px', 
-                      boxShadow: 'none', 
-                      margin: '0', 
-                      maxWidth: '100%', 
-                      padding: 0, 
-                      width: '100%' 
-                    }}
-                  >
-                    <div style={{ padding: '16px' }}>
-                      <a href="https://www.instagram.com/p/DTKp5hGD-J-/" target="_blank" style={{ color:'#c9c8cd', fontFamily:'Arial,sans-serif', fontSize:'14px', fontStyle:'normal', fontWeight:'normal', lineHeight:'17px', textDecoration:'none' }}>
-                        Loading Feed...
-                      </a>
+        {/* Instagram Highlights */}
+        <div className="flex gap-8 md:gap-16 px-4 py-12 mb-20 max-w-full overflow-x-auto no-scrollbar scroll-smooth overflow-y-visible justify-center items-center">
+          {INSTAGRAM_HIGHLIGHTS.map((item) => (
+            <a key={item.id} href={item.url} target="_blank" rel="noopener noreferrer" className="highlight-item flex flex-col items-center gap-4 group no-underline flex-shrink-0">
+              <div className="highlight-circle relative w-16 h-16 md:w-24 md:h-24 rounded-full p-[3.5px] bg-gradient-to-tr from-[#E0C3FC] to-[#8EC5FC] shadow-lg overflow-visible">
+                <div className="w-full h-full rounded-full border-[3px] border-white overflow-hidden bg-white flex items-center justify-center">
+                  {item.isCustom ? (
+                    <div className="w-full h-full bg-[#e0f2fe] flex items-center justify-center group-hover:bg-[#bae6fd] transition-colors duration-500">
+                      <span className="serif italic text-2xl md:text-3xl text-[#0c4a6e] lowercase">me</span>
                     </div>
-                  </blockquote>
+                  ) : (
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                  )}
                 </div>
               </div>
-            </div>
+              <span className="text-[9px] md:text-[11px] font-bold tracking-[0.2em] text-slate-400 font-sans uppercase">{item.title}</span>
+            </a>
+          ))}
+        </div>
+
+        {/* Infinite Scroller */}
+        <div className="relative w-full overflow-hidden py-10">
+          <div className="scroll-track flex gap-6 md:gap-12 px-6 md:px-12">
+            {scrollingPosts.map((post, idx) => (
+              <div key={`${post.id}-${idx}`} className="flex-shrink-0 w-[225px] md:w-[300px]">
+                <a 
+                  href={post.url} target="_blank" rel="noopener noreferrer" 
+                  className="group relative block w-full aspect-[3/4] overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-700 border border-black/5 rounded-sm"
+                >
+                  <img src={post.imageUrl} alt="Shooting" className="w-full h-full object-cover grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </a>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -331,18 +367,13 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="reveal text-center mb-24">
             <span className="text-[10px] tracking-[0.3em] font-bold text-[#c5a059] uppercase block mb-4">Selected Works</span>
-            <h2 className="serif text-4xl md:text-6xl font-light tracking-tight lowercase">portfolio</h2>
+            <h2 className="serif text-4xl md:text-6xl font-light tracking-tight lowercase text-balance">portfolio</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-4 lg:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {PORTFOLIO_IMAGES.map((img, idx) => (
-              <div key={idx} className="reveal group relative overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-700">
+              <div key={idx} className="reveal group relative overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-700 rounded-sm border border-black/5">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src={img.url} alt={img.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-1000 ease-out" />
-                </div>
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <span className="serif italic text-xl block translate-y-4 group-hover:translate-y-0 transition-transform duration-500 text-balance">{img.title}</span>
-                  </div>
+                  <img src={img.url} alt={img.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out" />
                 </div>
               </div>
             ))}
@@ -350,53 +381,8 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Club Section */}
-      <section id="club" className="bg-[#1a1a1a] py-32 text-white px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="reveal text-center mb-24">
-            <h2 className="serif text-4xl md:text-6xl font-light mb-6 text-[#c5a059] tracking-tight lowercase">creative consultation</h2>
-            <p className="text-slate-400 max-w-2xl mx-auto text-sm tracking-wide font-light text-balance">rinrinによるパーソナル・カウンセリング。</p>
-          </div>
-          <div id="contact" className="reveal flex flex-col lg:flex-row gap-12 h-[600px]">
-            <div className="lg:w-1/3 space-y-8 flex flex-col justify-center">
-              <div className="flex items-center gap-6">
-                <img src={rinrin.avatarUrl} className="w-20 h-20 rounded-full border border-[#c5a059]/30 p-1 object-cover grayscale hover:grayscale-0 transition-all duration-700" />
-                <div><h3 className="serif text-2xl lowercase tracking-tight">rinrin</h3></div>
-              </div>
-              <p className="text-sm text-slate-400 font-light leading-relaxed serif italic text-balance">「写真は心の鏡。言葉は魂の響き。」</p>
-            </div>
-            <div className="lg:w-2/3 bg-white/5 rounded-3xl border border-white/10 flex flex-col overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar" ref={scrollRef}>
-                {messages.map((msg, i) => (
-                  <div key={i} className={`flex w-full ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] px-6 py-4 rounded-3xl text-sm leading-relaxed ${msg.role === 'user' ? 'bg-[#c5a059] text-white rounded-tr-none' : 'bg-white/10 text-slate-200 border border-white/5 rounded-tl-none'}`}>
-                      {msg.text}
-                    </div>
-                  </div>
-                ))}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="flex gap-2 p-3 bg-white/5 rounded-full px-5">
-                      <div className="w-1 h-1 bg-gold rounded-full animate-bounce"></div>
-                      <div className="w-1 h-1 bg-gold rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                      <div className="w-1 h-1 bg-gold rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <form onSubmit={handleSendMessage} className="p-6 border-t border-white/10 bg-white/5">
-                <div className="relative flex items-center">
-                  <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="rinrinにメッセージを送る..." className="w-full bg-transparent border border-white/20 rounded-full py-4 px-6 pr-16 text-sm text-white outline-none" />
-                  <button type="submit" disabled={!input.trim() || isLoading} className="absolute right-2 w-10 h-10 bg-[#c5a059] text-white rounded-full flex items-center justify-center transition-all"><i className="fas fa-paper-plane text-xs"></i></button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="py-24 px-8 border-t border-slate-100 flex flex-col items-center gap-12 bg-white">
+      <footer className="py-24 px-8 border-t border-slate-100 flex flex-col items-center gap-12 bg-white text-center">
         <div className="serif text-3xl tracking-[0.5em] font-light uppercase">RIN RIN studio</div>
         <div className="text-[10px] text-slate-300 font-medium tracking-[0.3em]">&copy; 2024 RIN RIN | STUDIO. ALL RIGHTS RESERVED.</div>
       </footer>

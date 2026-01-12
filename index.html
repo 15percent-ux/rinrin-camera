@@ -7,6 +7,8 @@
     <title>rinrin | Honest Creative Club</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- GSAP Core Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+JP:wght@100;300;400;500;700&family=Inter:wght@200;300;400;500&family=Shippori+Mincho:wght@400;500;600&family=Zen+Kurenaido&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=WindSong:wght@400;500&display=swap');
@@ -51,7 +53,6 @@
             text-wrap: balance;
         }
 
-        /* Hero Animation Container */
         .animation-container {
             display: flex;
             justify-content: center;
@@ -65,48 +66,12 @@
             .animation-container { gap: 0.4em; }
         }
 
-        .letter {
+        .char {
             display: inline-block;
-            opacity: 0;
             will-change: transform, opacity;
-            animation-duration: 0.8s;
-            animation-fill-mode: forwards;
-            animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0;
         }
 
-        .letter.left { animation-name: rollFromLeft; }
-        .letter.right { animation-name: rollFromRight; }
-
-        .letter:nth-child(1) { animation-delay: 0.1s; }
-        .letter:nth-child(2) { animation-delay: 0.2s; }
-        .letter:nth-child(3) { animation-delay: 0.3s; }
-        .letter:nth-child(4) { animation-delay: 0.4s; }
-        .letter:nth-child(5) { animation-delay: 0.5s; }
-        .letter:nth-child(6) { animation-delay: 0.6s; }
-
-        @keyframes rollFromLeft {
-            0% {
-                opacity: 0;
-                transform: translateX(-150%) rotate(-120deg);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) rotate(0deg);
-            }
-        }
-
-        @keyframes rollFromRight {
-            0% {
-                opacity: 0;
-                transform: translateX(150%) rotate(120deg);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0) rotate(0deg);
-            }
-        }
-
-        /* Floating Animation for 'me' */
         @keyframes floatingMe {
             0% { transform: translate(0, 0) rotate(-8deg); }
             50% { transform: translate(15px, -40px) rotate(-2deg); }
@@ -118,7 +83,54 @@
             will-change: transform;
         }
 
-        /* Instagram Embed Fixes */
+        /* 画像の浮遊アニメーション */
+        @keyframes softFloatImage {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .animate-soft-float {
+            animation: softFloatImage 6s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        /* 無限横スクロールアニメーション */
+        @keyframes infinite-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .scroll-track {
+            display: flex;
+            width: max-content;
+            animation: infinite-scroll 40s linear infinite;
+        }
+
+        .scroll-track:hover {
+            animation-play-state: paused;
+        }
+
+        /* ヒーロー背景アニメーション */
+        @keyframes breathingHero {
+            0% { transform: scale(1.1) translateY(0); }
+            50% { transform: scale(1.15) translateY(-1.5%); }
+            100% { transform: scale(1.1) translateY(0); }
+        }
+
+        .hero-bg-animate {
+            transform: scale(1.1);
+            animation: breathingHero 15s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         .instagram-media {
             margin: 0 !important;
             width: 100% !important;
@@ -126,9 +138,9 @@
             min-width: unset !important;
         }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #fff; }
-        ::-webkit-scrollbar-thumb { background: var(--gold); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
     </style>
     <script type="importmap">
 {
