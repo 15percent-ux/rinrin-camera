@@ -52,7 +52,6 @@
             text-wrap: balance;
         }
 
-        /* 境界線（マスク）の役割を果たすコンテナ */
         .animation-container {
             display: flex;
             justify-content: center;
@@ -60,7 +59,7 @@
             overflow: hidden;
             perspective: 1000px;
             gap: 0.1em;
-            padding-bottom: 0.05em; /* フォントのディセンダが切れないよう微調整 */
+            padding-bottom: 0.05em;
         }
 
         @media (min-width: 768px) {
@@ -84,7 +83,6 @@
             will-change: transform;
         }
 
-        /* 画像の浮遊アニメーション */
         @keyframes softFloatImage {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
@@ -95,7 +93,6 @@
             will-change: transform;
         }
 
-        /* 無限横スクロールアニメーション */
         @keyframes infinite-scroll {
             from { transform: translateX(0); }
             to { transform: translateX(-50%); }
@@ -111,17 +108,10 @@
             animation-play-state: paused;
         }
 
-        /* ヒーロー背景アニメーション */
         @keyframes breathingHero {
-            0% {
-                transform: scale(1.1) translateY(0);
-            }
-            50% {
-                transform: scale(1.15) translateY(-1.5%);
-            }
-            100% {
-                transform: scale(1.1) translateY(0);
-            }
+            0% { transform: scale(1.1) translateY(0); }
+            50% { transform: scale(1.15) translateY(-1.5%); }
+            100% { transform: scale(1.1) translateY(0); }
         }
 
         .hero-bg-animate {
@@ -130,39 +120,29 @@
             will-change: transform;
         }
 
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .instagram-media {
-            margin: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            min-width: unset !important;
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
     </style>
     <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@^19.0.0",
-    "react-dom": "https://esm.sh/react-dom@^19.0.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
-  }
-}
-</script>
+    {
+      "imports": {
+        "react": "https://esm.sh/react@^19.0.0",
+        "react-dom": "https://esm.sh/react-dom@^19.0.0",
+        "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+      }
+    }
+    </script>
 </head>
 <body>
     <div id="root"></div>
+    <!-- 明示的なエントリーポイントの指定 -->
+    <script type="module" src="/index.tsx"></script>
     <script async src="//www.instagram.com/embed.js"></script>
 </body>
 </html>
