@@ -3,6 +3,7 @@ import { ViewMode, Character } from './types';
 import { DEFAULT_CHARACTERS } from './constants';
 
 declare const gsap: any;
+declare const ScrollTrigger: any;
 
 const PORTFOLIO_IMAGES = [
   { 
@@ -157,7 +158,26 @@ const App: React.FC = () => {
       });
     }
 
-    // Reveal Intersection Observer
+    // GSAP ScrollTrigger - Image Grayscale to Color Reveal
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+      
+      const grayscaleImages = document.querySelectorAll('img.grayscale');
+      grayscaleImages.forEach((img: any) => {
+        gsap.to(img, {
+          scrollTrigger: {
+            trigger: img,
+            start: "top 80%", // 画像の上が画面の80%の位置に来たら開始
+            toggleActions: "play none none none", // 一度きりの実行
+          },
+          filter: "grayscale(0%)",
+          duration: 1.2,
+          ease: "power2.out"
+        });
+      });
+    }
+
+    // Reveal Intersection Observer (for text and containers)
     const observerOptions = { threshold: 0.1 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -175,7 +195,12 @@ const App: React.FC = () => {
     }, observerOptions);
 
     document.querySelectorAll('.reveal, #about, #tips, #furniture, #contact').forEach(el => observer.observe(el));
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.getAll().forEach((t: any) => t.kill());
+      }
+    };
   }, []);
 
   return (
@@ -288,7 +313,7 @@ const App: React.FC = () => {
 
       {/* Community Section: 'me' */}
       <section id="community" className="py-40 md:py-64 bg-white relative overflow-hidden">
-        <div className="absolute top-20 md:top-0 -left-20 md:-left-32 text-[70vw] md:text-[50vw] font-bold text-slate-50/70 select-none pointer-events-none serif leading-none z-0 animate-float-me opacity-30 md:opacity-80">
+        <div className="absolute top-20 md:top-0 -left-20 md:-left-32 text-[70vw] md:text-[50vw] font-bold text-slate-50/70 select-none pointer-events-none serif handwriting opacity-30 md:opacity-80">
           me
         </div>
         <div className="max-w-6xl mx-auto px-8 relative z-10">
