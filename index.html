@@ -94,30 +94,21 @@
             will-change: transform;
         }
 
-        /* 無限横スクロールアニメーション */
-        @keyframes infinite-scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
-
-        .scroll-track {
-            display: flex;
-            width: max-content;
-            animation: infinite-scroll 40s linear infinite;
-        }
-
-        .scroll-track:hover {
-            animation-play-state: paused;
-        }
-
         /* ヒーロー背景アニメーション */
         @keyframes breathingHero {
-            0% { transform: scale(1.1) translateY(0); }
-            50% { transform: scale(1.15) translateY(-1.5%); }
-            100% { transform: scale(1.1) translateY(0); }
+            0% {
+                transform: scale(1.1) translateY(0);
+            }
+            50% {
+                transform: scale(1.15) translateY(-1.5%);
+            }
+            100% {
+                transform: scale(1.1) translateY(0);
+            }
         }
 
         .hero-bg-animate {
+            /* scale(1.1)を初期値にすることで、アニメーション中の端の切れを防止 */
             transform: scale(1.1);
             animation: breathingHero 15s ease-in-out infinite;
             will-change: transform;
