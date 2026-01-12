@@ -500,9 +500,53 @@ const App: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-24 px-8 border-t border-slate-100 flex flex-col items-center gap-12 bg-white text-center">
-        <div className="serif text-3xl tracking-[0.5em] font-light uppercase">RIN RIN studio</div>
-        <div className="text-[10px] text-slate-300 font-medium tracking-[0.3em]">&copy; 2024 RIN RIN | STUDIO. ALL RIGHTS RESERVED.</div>
+      <footer className="py-24 px-8 border-t border-slate-100 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8">
+            {/* Brand Info */}
+            <div className="md:col-span-2 space-y-8">
+              <div className="serif text-3xl md:text-4xl tracking-[0.5em] font-light uppercase">RIN RIN studio</div>
+              <p className="text-[11px] md:text-[12px] text-slate-400 leading-relaxed max-w-sm font-light tracking-[0.2em] uppercase">
+                Selfbrand shooting studio based in Niigata, Tokyo and Nagano.
+                Capturing the essence of refined natural beauty and sophisticated authenticity.
+              </p>
+              <div className="signature text-3xl text-slate-300 transform -rotate-2 origin-left">rinrin</div>
+            </div>
+
+            {/* Navigation Menu 1 */}
+            <div className="space-y-8">
+              <h4 className="text-[10px] tracking-[0.4em] font-bold text-slate-900 uppercase border-b border-black/5 pb-2 inline-block">Explore</h4>
+              <ul className="space-y-4 text-[11px] tracking-[0.3em] text-slate-500 uppercase font-medium">
+                <li><a href="#about" className="hover:text-gold transition-colors duration-300">Profile</a></li>
+                <li><a href="#message" className="hover:text-gold transition-colors duration-300">Message</a></li>
+                <li><a href="#community" className="hover:text-gold transition-colors duration-300">Community</a></li>
+                <li><a href="#portfolio" className="hover:text-gold transition-colors duration-300">Portfolio</a></li>
+              </ul>
+            </div>
+
+            {/* Navigation Menu 2 */}
+            <div className="space-y-8">
+              <h4 className="text-[10px] tracking-[0.4em] font-bold text-slate-900 uppercase border-b border-black/5 pb-2 inline-block">Services</h4>
+              <ul className="space-y-4 text-[11px] tracking-[0.3em] text-slate-500 uppercase font-medium">
+                <li><a href="#tips" className="hover:text-gold transition-colors duration-300">Shooting Tips</a></li>
+                <li><a href="#furniture" className="hover:text-gold transition-colors duration-300">Curated Items</a></li>
+                <li><a href={INSTAGRAM_BASE_URL} target="_blank" className="hover:text-gold transition-colors duration-300">Instagram</a></li>
+                <li><a href="#contact" className="hover:text-gold transition-colors duration-300">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="mt-24 pt-12 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div className="flex gap-8 text-[18px] text-slate-300">
+              <a href={INSTAGRAM_BASE_URL} target="_blank" className="hover:text-gold transition-colors"><i className="fab fa-instagram"></i></a>
+              <a href="#" className="hover:text-gold transition-colors"><i className="fab fa-pinterest"></i></a>
+            </div>
+            <div className="text-[10px] text-slate-300 font-medium tracking-[0.4em] uppercase text-center md:text-right">
+              &copy; 2024 RIN RIN | Honest Creative Club. ALL RIGHTS RESERVED.
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );
