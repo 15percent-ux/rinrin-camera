@@ -48,7 +48,6 @@ const PORTFOLIO_IMAGES = [
   }
 ];
 
-// シューティングセクション用の画像
 const INSTAGRAM_POSTS = [
   { id: 'p1', url: 'https://www.instagram.com/rinrin_photo.yk/', imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/f_auto,q_auto/v1768210283/IMG_1357_dvyi7h.jpg' },
   { id: 'p2', url: 'https://www.instagram.com/rinrin_photo.yk/', imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/f_auto,q_auto/v1768210272/IMG_1362_hegtak.jpg' },
@@ -65,7 +64,6 @@ const INSTAGRAM_POSTS = [
   { id: 'p13', url: 'https://www.instagram.com/rinrin_photo.yk/', imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/f_auto,q_auto/v1768222831/IMG_1370_bbv3hp.jpg' },
 ];
 
-// 家具セクション用の画像
 const FURNITURE_POSTS = [
   { id: 'f1', imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768222832/IMG_1371_rzy6va.jpg' },
   { id: 'f2', imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768222834/IMG_1372_ie6cvs.jpg' },
@@ -83,7 +81,6 @@ const FURNITURE_POSTS = [
   { id: 'f14', imageUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768222831/IMG_1389_tn6uon.jpg' },
 ];
 
-// プロフィールセクション用のミニフィード
 const PROFILE_FEED_POSTS = [
   { 
     id: 'feed1', 
@@ -115,34 +112,20 @@ const App: React.FC = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const profileRef = useRef<HTMLElement>(null);
 
-  // 無限ループ用に画像を複製
   const scrollingShootingPosts = [...INSTAGRAM_POSTS, ...INSTAGRAM_POSTS];
   const scrollingFurniturePosts = [...FURNITURE_POSTS, ...FURNITURE_POSTS];
 
   useEffect(() => {
-    // GSAP Hero Animation - Simultaneous Elegant Reveal from Mask
+    // GSAP Hero Animation
     if (typeof gsap !== 'undefined' && titleRef.current) {
       const chars = titleRef.current.querySelectorAll('.char');
-      
       gsap.fromTo(chars, 
-        { 
-          y: "110%", 
-          opacity: 0.5,
-          rotateX: -15 
-        },
-        { 
-          y: "0%", 
-          opacity: 1, 
-          rotateX: 0,
-          duration: 2.8, 
-          ease: "expo.out", 
-          stagger: 0, 
-          delay: 0.6 
-        }
+        { y: "110%", opacity: 0.5, rotateX: -15 },
+        { y: "0%", opacity: 1, rotateX: 0, duration: 2.8, ease: "expo.out", stagger: 0, delay: 0.6 }
       );
     }
 
-    // GSAP Highlights Hover Animation logic
+    // GSAP Highlights Hover
     if (typeof gsap !== 'undefined') {
       const highlights = document.querySelectorAll('.highlight-item');
       highlights.forEach((el) => {
@@ -158,26 +141,65 @@ const App: React.FC = () => {
       });
     }
 
-    // GSAP ScrollTrigger - Image Grayscale to Color Reveal
+    // GSAP ScrollTrigger & Integrated Hover Management
     if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
       gsap.registerPlugin(ScrollTrigger);
       
       const grayscaleImages = document.querySelectorAll('img.grayscale');
+      
       grayscaleImages.forEach((img: any) => {
-        gsap.to(img, {
-          scrollTrigger: {
-            trigger: img,
-            start: "top 80%", // 画像の上が画面の80%の位置に来たら開始
-            toggleActions: "play none none none", // 一度きりの実行
-          },
-          filter: "grayscale(0%)",
-          duration: 1.2,
-          ease: "power2.out"
+        // --- 初期化とCSS干渉の排除 ---
+        img._isRevealed = false;
+        // TailwindやCSS側のtransitionがGSAPと喧嘩しないよう強制的に無効化
+        img.style.transition = 'none';
+        // 初期状態を確実にグレー100%にセット
+        gsap.set(img, { filter: "grayscale(100%)" });
+
+        // --- 1. スクロールによる恒久的なカラー化 ---
+        ScrollTrigger.create({
+          trigger: img,
+          start: "top 30%", // 画面上部3割
+          onEnter: () => {
+            img._isRevealed = true;
+            gsap.to(img, {
+              filter: "grayscale(0%)",
+              duration: 1.5, // じわっと変わる
+              ease: "power2.inOut",
+              overwrite: "auto"
+            });
+          }
         });
+
+        // --- 2. PC版マウスイベントによる制御 ---
+        const handleMouseEnter = () => {
+          gsap.to(img, {
+            filter: "grayscale(0%)",
+            duration: 0.4,
+            ease: "power1.out",
+            overwrite: "auto"
+          });
+        };
+
+        const handleMouseLeave = () => {
+          if (!img._isRevealed) {
+            gsap.to(img, {
+              filter: "grayscale(100%)",
+              duration: 0.6,
+              ease: "power1.inOut",
+              overwrite: "auto"
+            });
+          }
+        };
+
+        img.addEventListener('mouseenter', handleMouseEnter);
+        img.addEventListener('mouseleave', handleMouseLeave);
+        
+        img._gsapMouseEnter = handleMouseEnter;
+        img._gsapMouseLeave = handleMouseLeave;
       });
     }
 
-    // Reveal Intersection Observer (for text and containers)
+    // Reveal Intersection Observer
     const observerOptions = { threshold: 0.1 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -195,11 +217,17 @@ const App: React.FC = () => {
     }, observerOptions);
 
     document.querySelectorAll('.reveal, #about, #tips, #furniture, #contact').forEach(el => observer.observe(el));
+
     return () => {
       observer.disconnect();
       if (typeof ScrollTrigger !== 'undefined') {
         ScrollTrigger.getAll().forEach((t: any) => t.kill());
       }
+      const grayscaleImages = document.querySelectorAll('img.grayscale');
+      grayscaleImages.forEach((img: any) => {
+        if (img._gsapMouseEnter) img.removeEventListener('mouseenter', img._gsapMouseEnter);
+        if (img._gsapMouseLeave) img.removeEventListener('mouseleave', img._gsapMouseLeave);
+      });
     };
   }, []);
 
@@ -252,7 +280,7 @@ const App: React.FC = () => {
           <div className="w-80 h-[28rem] md:w-[28rem] md:h-[36rem] relative group profile-img-anim">
             <img 
               src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768155657/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-12_3.17.11_pntqeo.png" 
-              className="absolute inset-0 w-full h-full object-cover grayscale brightness-105 shadow-sm rounded-sm transition-all duration-1000 group-hover:grayscale-0"
+              className="absolute inset-0 w-full h-full object-cover grayscale brightness-105 shadow-sm rounded-sm"
               alt="Profile"
             />
           </div>
@@ -273,8 +301,8 @@ const App: React.FC = () => {
               <span className="text-[8px] tracking-[0.3em] font-bold text-slate-300 uppercase block mb-4">Instagram Feed</span>
               <div className="grid grid-cols-3 gap-3 max-w-[400px]">
                 {PROFILE_FEED_POSTS.map((post) => (
-                  <a key={post.id} href={post.url} target="_blank" rel="noopener noreferrer" className="group relative block aspect-square overflow-hidden rounded-sm border border-black/5 bg-slate-50 transition-all duration-500 shadow-sm">
-                    <img src={post.imageUrl} alt="Instagram Feed" className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-110" />
+                  <a key={post.id} href={post.url} target="_blank" rel="noopener noreferrer" className="group relative block aspect-square overflow-hidden rounded-sm border border-black/5 bg-slate-50 shadow-sm transition-transform duration-500">
+                    <img src={post.imageUrl} alt="Instagram Feed" className="w-full h-full object-cover grayscale" />
                   </a>
                 ))}
               </div>
@@ -320,7 +348,7 @@ const App: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-24 items-center mb-16">
             <div className="reveal relative pr-8 pb-8 md:pr-12 md:pb-12 group/me">
               <div className="aspect-[4/5] bg-slate-50 overflow-hidden relative shadow-2xl rounded-sm animate-soft-float">
-                <img src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768209448/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%86%E3%82%99%E3%82%B5%E3%82%99%E3%82%A4%E3%83%B3_4_qertko.png" className="w-full h-full object-cover grayscale transition-all duration-700 group-hover/me:grayscale-0" alt="Community me" />
+                <img src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768209448/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%86%E3%82%99%E3%82%B5%E3%82%99%E3%82%A4%E3%83%B3_4_qertko.png" className="w-full h-full object-cover grayscale" alt="Community me" />
               </div>
             </div>
             <div className="space-y-12">
@@ -352,7 +380,7 @@ const App: React.FC = () => {
               width="100%" height="auto" preload="metadata" muted loop playsInline autoPlay 
               poster="https://res.cloudinary.com/dxr2aeoze/video/upload/f_auto,q_auto,so_0/v1768210062/画面収録_2026-01-12_18.24.12_hybn1c.jpg"
               style={{ display: 'block', margin: '0 auto', width: '100%', maxWidth: '400px', height: 'auto', aspectRatio: '9 / 16', borderRadius: '12px', objectFit: 'cover', backgroundColor: '#eee' }}
-              className="shadow-2xl grayscale hover:grayscale-0 transition-all duration-1000"
+              className="shadow-2xl transition-all duration-1000 grayscale"
             >
               <source src="https://res.cloudinary.com/dxr2aeoze/video/upload/f_auto,q_auto/v1768210062/画面収録_2026-01-12_18.24.12_hybn1c.mp4" type="video/mp4" />
             </video>
@@ -360,7 +388,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Shooting Section (Infinite Horizontal Scroll) */}
+      {/* Shooting Section */}
       <section id="tips" className="py-32 md:py-48 bg-[#f9f8f4] relative border-y border-black/5 overflow-hidden">
         <div className="text-center space-y-6 mb-16 px-8 reveal">
           <div className="flex items-center justify-center gap-4">
@@ -382,7 +410,7 @@ const App: React.FC = () => {
                       <span className="serif italic text-2xl md:text-3xl text-[#0c4a6e] lowercase">me</span>
                     </div>
                   ) : (
-                    <img src={item.img} alt={item.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" />
+                    <img src={item.img} alt={item.title} className="w-full h-full object-cover grayscale" />
                   )}
                 </div>
               </div>
@@ -397,15 +425,9 @@ const App: React.FC = () => {
               <div key={`${post.id}-${idx}`} className="flex-shrink-0 animate-soft-float" style={{ animationDelay: `${idx * 0.2}s` }}>
                 <a 
                   href={post.url} target="_blank" rel="noopener noreferrer" 
-                  className="group relative block h-[300px] md:h-[450px] w-auto overflow-hidden bg-white shadow-lg hover:shadow-2xl transition-all duration-700 border border-black/5 rounded-sm"
+                  className="group relative block h-[300px] md:h-[450px] w-auto overflow-hidden bg-white shadow-lg rounded-sm"
                 >
-                  <img 
-                    src={post.imageUrl} 
-                    alt="Shooting" 
-                    className="h-full w-auto grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105" 
-                    style={{ objectFit: 'contain' }}
-                  />
-                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <img src={post.imageUrl} alt="Shooting" className="h-full w-auto grayscale" style={{ objectFit: 'contain' }} />
                 </a>
               </div>
             ))}
@@ -413,7 +435,7 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Furniture Section (New) */}
+      {/* Furniture Section */}
       <section id="furniture" className="py-32 md:py-48 bg-white relative border-b border-black/5 overflow-hidden">
         <div className="text-center space-y-6 mb-16 px-8 reveal">
           <div className="flex items-center justify-center gap-4">
@@ -428,14 +450,8 @@ const App: React.FC = () => {
           <div className="scroll-track flex gap-6 md:gap-12 px-6 md:px-12">
             {scrollingFurniturePosts.map((post, idx) => (
               <div key={`${post.id}-${idx}`} className="flex-shrink-0 animate-soft-float" style={{ animationDelay: `${idx * 0.3}s` }}>
-                <div className="group relative block h-[300px] md:h-[450px] w-auto overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-700 border border-black/5 rounded-sm cursor-default">
-                  <img 
-                    src={post.imageUrl} 
-                    alt="Furniture" 
-                    className="h-full w-auto grayscale transition-all duration-1000 group-hover:grayscale-0 group-hover:scale-105" 
-                    style={{ objectFit: 'contain' }}
-                  />
-                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="group relative block h-[300px] md:h-[450px] w-auto overflow-hidden bg-white shadow-md rounded-sm cursor-default">
+                  <img src={post.imageUrl} alt="Furniture" className="h-full w-auto grayscale" style={{ objectFit: 'contain' }} />
                 </div>
               </div>
             ))}
@@ -452,9 +468,9 @@ const App: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             {PORTFOLIO_IMAGES.map((img, idx) => (
-              <div key={idx} className="reveal group relative overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-700 rounded-sm border border-black/5">
+              <div key={idx} className="reveal group relative overflow-hidden bg-white shadow-sm rounded-sm">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src={img.url} alt={img.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out" />
+                  <img src={img.url} alt={img.title} className="w-full h-full object-cover grayscale transition-transform duration-1000 ease-out" />
                 </div>
                 <div className="mt-4 flex justify-between items-center px-1">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-stone-400">{img.title}</span>
@@ -474,27 +490,15 @@ const App: React.FC = () => {
             <h2 className="serif text-5xl md:text-7xl font-light lowercase">contact</h2>
             <div className="gold-line max-w-[80px] mx-auto opacity-40 mt-6"></div>
           </div>
-          
           <div className="space-y-8">
-            <p className="handwriting text-lg md:text-2xl text-black/80 tracking-wide">
-              お仕事依頼はこちら
-            </p>
-            
+            <p className="handwriting text-lg md:text-2xl text-black/80 tracking-wide">お仕事依頼はこちら</p>
             <div className="pt-8">
-              <a 
-                href={INSTAGRAM_BASE_URL} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="group relative inline-flex items-center gap-8 py-5 px-14 bg-black text-white rounded-full overflow-hidden transition-all hover:bg-[#c5a059] active:scale-95 shadow-2xl"
-              >
+              <a href={INSTAGRAM_BASE_URL} target="_blank" rel="noopener noreferrer" className="group relative inline-flex items-center gap-8 py-5 px-14 bg-black text-white rounded-full overflow-hidden transition-all hover:bg-[#c5a059] active:scale-95 shadow-2xl">
                 <span className="relative z-10 text-[11px] tracking-[0.4em] uppercase font-bold">Contact Me</span>
                 <i className="fab fa-instagram text-lg relative z-10 group-hover:rotate-12 transition-transform"></i>
               </a>
             </div>
-            
-            <p className="text-[9px] tracking-[0.2em] text-slate-400 font-sans uppercase">
-              Usually responds within 24 hours via Instagram DM
-            </p>
+            <p className="text-[9px] tracking-[0.2em] text-slate-400 font-sans uppercase">Usually responds within 24 hours via Instagram DM</p>
           </div>
         </div>
       </section>
@@ -503,7 +507,6 @@ const App: React.FC = () => {
       <footer className="py-24 px-8 border-t border-slate-100 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-8">
-            {/* Brand Info */}
             <div className="md:col-span-2 space-y-8">
               <div className="serif text-3xl md:text-4xl tracking-[0.5em] font-light uppercase">RIN RIN studio</div>
               <p className="text-[11px] md:text-[12px] text-slate-400 leading-relaxed max-w-sm font-light tracking-[0.2em] uppercase">
@@ -512,8 +515,6 @@ const App: React.FC = () => {
               </p>
               <div className="signature text-3xl text-slate-300 transform -rotate-2 origin-left">rinrin</div>
             </div>
-
-            {/* Navigation Menu 1 */}
             <div className="space-y-8">
               <h4 className="text-[10px] tracking-[0.4em] font-bold text-slate-900 uppercase border-b border-black/5 pb-2 inline-block">Explore</h4>
               <ul className="space-y-4 text-[11px] tracking-[0.3em] text-slate-500 uppercase font-medium">
@@ -523,8 +524,6 @@ const App: React.FC = () => {
                 <li><a href="#portfolio" className="hover:text-gold transition-colors duration-300">Portfolio</a></li>
               </ul>
             </div>
-
-            {/* Navigation Menu 2 */}
             <div className="space-y-8">
               <h4 className="text-[10px] tracking-[0.4em] font-bold text-slate-900 uppercase border-b border-black/5 pb-2 inline-block">Services</h4>
               <ul className="space-y-4 text-[11px] tracking-[0.3em] text-slate-500 uppercase font-medium">
@@ -535,8 +534,6 @@ const App: React.FC = () => {
               </ul>
             </div>
           </div>
-
-          {/* Bottom Bar */}
           <div className="mt-24 pt-12 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8">
             <div className="flex gap-8 text-[18px] text-slate-300">
               <a href={INSTAGRAM_BASE_URL} target="_blank" className="hover:text-gold transition-colors"><i className="fab fa-instagram"></i></a>
