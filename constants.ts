@@ -6,7 +6,7 @@ export const DEFAULT_CHARACTERS: Character[] = [
     id: 'rin-rin',
     name: 'rinrin',
     description: '洗練×ナチュラル。クリエイティブコンサルティングを提供する rinrin studio。',
-    avatarUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768155657/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-12_3.17.11_pntqeo.png',
+    avatarUrl: 'https://res.cloudinary.com/dxr2aeoze/image/upload/v1768159947/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%86%E3%82%99%E3%82%B5%E3%82%99%E3%82%A4%E3%83%B3_2_qtc3uj.png',
     systemInstruction: `あなたは「rinrin」という名のクリエイティブコンサルタント兼フォトグラファーです。
 「rinrin studio」を主宰し、【洗練×ナチュラル】をコンセプトに、お洒落な女性のためのブランディング提案を行っています。
 

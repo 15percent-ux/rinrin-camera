@@ -275,11 +275,11 @@ const App: React.FC = () => {
       {/* Profile Section */}
       <section id="about" ref={profileRef} className="py-24 md:py-40 px-8 max-w-5xl mx-auto flex flex-col md:flex-row gap-16 md:gap-32 items-center md:items-start overflow-hidden border-b border-slate-50">
         <div className="flex-shrink-0 w-full flex justify-center md:block md:w-auto">
-          {/* モバイルでは画面幅に合わせたアスペクト比、PCでは固定サイズを維持 */}
-          <div className="w-[90vw] max-w-[340px] aspect-[3/4] md:w-[28rem] md:h-[36rem] md:aspect-auto relative group profile-img-anim">
+          {/* PC版では高さをauto、比率をautoにリセット */}
+          <div className="w-[90vw] max-w-[340px] aspect-[3/4] md:w-[28rem] md:h-auto md:aspect-auto relative group profile-img-anim">
             <img 
-              src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768155657/%E3%82%B9%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%B3%E3%82%B7%E3%83%A7%E3%83%83%E3%83%88_2026-01-12_3.17.11_pntqeo.png" 
-              className="absolute inset-0 w-full h-full object-cover object-top grayscale brightness-105 shadow-sm rounded-sm"
+              src="https://res.cloudinary.com/dxr2aeoze/image/upload/v1768159947/%E5%90%8D%E7%A7%B0%E6%9C%AA%E8%A8%AD%E5%AE%9A%E3%81%AE%E3%83%86%E3%82%99%E3%82%B5%E3%82%99%E3%82%A4%E3%83%B3_2_qtc3uj.png" 
+              className="w-full h-full md:h-auto object-cover object-top md:object-center grayscale brightness-105 shadow-sm rounded-sm"
               alt="Profile"
             />
           </div>
